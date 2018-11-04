@@ -22,9 +22,9 @@ namespace DeveloperConsole
 
             uConsole.RegisterCommand("save", () => GameManager.m_PendingSave = true);
 
-            uConsole.RegisterCommand("currentSceneName", () => Debug.Log(Scene.SceneManager.GetActiveScene().name));
+            uConsole.RegisterCommand("scene_name", () => Debug.Log(Scene.SceneManager.GetActiveScene().name));
 
-            uConsole.RegisterCommand("currentSceneIndex", () => Debug.Log(Scene.SceneManager.GetActiveScene().buildIndex));
+            uConsole.RegisterCommand("scene_index", () => Debug.Log(Scene.SceneManager.GetActiveScene().buildIndex));
 
             uConsole.RegisterCommand("pos", GetPosition);
 
