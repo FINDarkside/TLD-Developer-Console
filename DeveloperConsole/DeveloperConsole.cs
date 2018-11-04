@@ -16,41 +16,34 @@ namespace DeveloperConsole
 
         private static void AddConsoleCommands()
         {
-            uConsole.RegisterCommand("load_scene", new uConsole.DebugCommand(() =>
-            {
-                var ind = uConsole.GetInt();
-                SceneManager.LoadScene(ind);
-            }));
+            uConsole.RegisterCommand("load_scene", LoadScene);
 
-            uConsole.RegisterCommand("fly", new uConsole.DebugCommand(() =>
-            {
-                bool fly = !FlyMode.m_Enabled;
-                if (uConsole.GetNumParameters() > 0 && uConsole.NextParameterIsBool())
-                    fly = uConsole.GetBool();
-                if (fly == FlyMode.m_Enabled)
-                    return;
-                if (fly)
-                    FlyMode.Enter();
-                else
-                    FlyMode.TeleportPlayerAndExit();
-            }));
+            uConsole.RegisterCommand("fly", Fly);
 
-            uConsole.RegisterCommand("save", new uConsole.DebugCommand(() =>
-            {
-                GameManager.m_PendingSave = true;
-            }));
+            uConsole.RegisterCommand("save", () => GameManager.m_PendingSave = true);
 
+            uConsole.RegisterCommand("currentSceneName", () => Debug.Log(Scene.SceneManager.GetActiveScene().name));
 
-            uConsole.RegisterCommand("currentSceneName", new uConsole.DebugCommand(() =>
-            {
-                Debug.Log(Scene.SceneManager.GetActiveScene().name);
-            }));
+            uConsole.RegisterCommand("currentSceneIndex", () => Debug.Log(Scene.SceneManager.GetActiveScene().buildIndex));
+        }
 
-            uConsole.RegisterCommand("currentSceneIndex", new uConsole.DebugCommand(() =>
-            {
-                Debug.Log(Scene.SceneManager.GetActiveScene().buildIndex);
-            }));
+        private static void LoadScene()
+        {
+            var ind = uConsole.GetInt();
+            SceneManager.LoadScene(ind);
+        }
 
+        private static void Fly()
+        {
+            bool fly = !FlyMode.m_Enabled;
+            if (uConsole.GetNumParameters() > 0 && uConsole.NextParameterIsBool())
+                fly = uConsole.GetBool();
+            if (fly == FlyMode.m_Enabled)
+                return;
+            if (fly)
+                FlyMode.Enter();
+            else
+                FlyMode.TeleportPlayerAndExit();
         }
     }
 }
