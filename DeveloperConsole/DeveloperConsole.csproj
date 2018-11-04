@@ -37,6 +37,7 @@
     <Reference Include="Harmony" />
     <Reference Include="System" />
     <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.PhysicsModule" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeveloperConsole.cs" />
