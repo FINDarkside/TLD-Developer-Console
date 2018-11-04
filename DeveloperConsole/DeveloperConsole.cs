@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using Scene = UnityEngine.SceneManagement;
 
 namespace DeveloperConsole
 {
@@ -9,7 +9,7 @@ namespace DeveloperConsole
 
         public static void OnLoad()
         {
-            UnityEngine.Object.Instantiate(Resources.Load("uConsole"));
+            Object.Instantiate(Resources.Load("uConsole"));
             uConsole.m_Instance.m_Activate = KeyCode.F1;
             AddConsoleCommands();
         }
@@ -37,18 +37,18 @@ namespace DeveloperConsole
 
             uConsole.RegisterCommand("save", new uConsole.DebugCommand(() =>
             {
-                GameManager.SaveGameAndDisplayHUDMessage();
+                GameManager.m_PendingSave = true;
             }));
 
 
             uConsole.RegisterCommand("currentSceneName", new uConsole.DebugCommand(() =>
             {
-                Debug.Log(SceneManager.GetActiveScene().name);
+                Debug.Log(Scene.SceneManager.GetActiveScene().name);
             }));
 
             uConsole.RegisterCommand("currentSceneIndex", new uConsole.DebugCommand(() =>
             {
-                Debug.Log(SceneManager.GetActiveScene().buildIndex);
+                Debug.Log(Scene.SceneManager.GetActiveScene().buildIndex);
             }));
 
         }
