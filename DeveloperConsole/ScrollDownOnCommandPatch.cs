@@ -1,13 +1,11 @@
 ﻿using Harmony;
 
-namespace DeveloperConsole
-{
+namespace DeveloperConsole {
 
-    [HarmonyPatch(typeof(uConsole), "RunCommand")]
-    internal static class ScrollDownOnCommandPatch
-    {
-        private static void Postfix()
-        {
+    [HarmonyPatch(typeof(uConsoleGUI), "InputFieldClearText")]
+    internal static class ScrollDownOnCommandPatch {
+
+        private static void Postfix() {
             uConsole.m_GUI.ScrollLogDownMax();
         }
     }
