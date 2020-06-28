@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Scene = UnityEngine.SceneManagement;
 using MelonLoader;
+using System;
 
 namespace DeveloperConsole {
 
@@ -12,11 +13,28 @@ namespace DeveloperConsole {
         }
 
         internal static void AddConsoleCommands() {
-            uConsole.RegisterCommand("scene_name", new System.Action(() => uConsoleLog.Add(Scene.SceneManager.GetActiveScene().name)));
+            uConsole.RegisterCommand("scene_name", new Action(() => uConsoleLog.Add(Scene.SceneManager.GetActiveScene().name)));
 
-            uConsole.RegisterCommand("pos", new System.Action(GetPosition));
+            uConsole.RegisterCommand("scene_list", new Action(ListScenes));
 
-            uConsole.RegisterCommand("tp", new System.Action(Teleport));
+            uConsole.RegisterCommand("pos", new Action(GetPosition));
+
+            uConsole.RegisterCommand("tp", new Action(Teleport));
+        }
+
+        private static void ListScenes() {
+            string PathToSceneName(string path) {
+                if (string.IsNullOrEmpty(path)) return "<null>";
+                path = path.Substring(path.LastIndexOf("/") + 1);
+                path = path.Remove(path.Length - ".unity".Length);
+                return path;
+            }
+
+            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
+            for (int i = 0; i < sceneCount; ++i) {
+                string path = Scene.SceneUtility.GetScenePathByBuildIndex(i);
+                uConsoleLog.Add(i + ": " + PathToSceneName(path));
+            }
         }
 
         private static void GetPosition() {
