@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DeveloperConsole {
 
-    [HarmonyPatch(typeof(ConsoleManager), "RegisterCommands")]
+    [HarmonyPatch(typeof(BootUpdate), "Start")]
     internal static class InitializePatch {
 
         private static void Prefix() {
