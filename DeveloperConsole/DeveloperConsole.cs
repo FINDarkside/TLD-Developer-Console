@@ -1,7 +1,5 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿using UnityEngine;
 using Scene = UnityEngine.SceneManagement;
-using Harmony;
 using MelonLoader;
 
 namespace DeveloperConsole {
@@ -10,7 +8,7 @@ namespace DeveloperConsole {
 
         public override void OnApplicationStart() {
             AddConsoleCommands();
-            HarmonyInstance.Create(InfoAttribute.Name).PatchAll(Assembly.GetExecutingAssembly());
+            Debug.Log($"[{InfoAttribute.Name}] version {InfoAttribute.Version} loaded!");
         }
 
         internal static void AddConsoleCommands() {
