@@ -21,7 +21,7 @@ namespace DeveloperConsole {
             base.OnApplicationQuit();
         }
 
-        internal static void AddConsoleCommands() {
+        private static void AddConsoleCommands() {
             uConsole.RegisterCommand("scene_name", new Action(() => uConsoleLog.Add(Scene.SceneManager.GetActiveScene().name)));
 
             uConsole.RegisterCommand("scene_list", new Action(ListScenes));
@@ -31,6 +31,10 @@ namespace DeveloperConsole {
             uConsole.RegisterCommand("pos", new Action(GetPosition));
 
             uConsole.RegisterCommand("tp", new Action(Teleport));
+
+            uConsole.RegisterCommand("gear_list", new Action(ListGear));
+
+            uConsole.RegisterCommand("gear_search", new Action(SearchGear));
         }
 
         private static void ListScenes() {
@@ -119,6 +123,37 @@ namespace DeveloperConsole {
             Quaternion rot = GameManager.GetVpFPSCamera().transform.rotation;
             GameManager.GetPlayerManagerComponent().TeleportPlayer(target, rot);
             GameManager.GetPlayerManagerComponent().StickPlayerToGround();
+        }
+
+        private static void ListGear() {
+            foreach (string gearName in GearNames.m_Names) {
+                if (!gearName.StartsWith("gear_")) continue;
+                uConsoleLog.Add(gearName.Substring("gear_".Length));
+            }
+        }
+
+        private static void SearchGear() {
+            if (uConsole.GetNumParameters() != 1) {
+                uConsoleLog.Add("Usage: search_gear name");
+                return;
+            }
+
+            string term = uConsole.GetString().ToLowerInvariant();
+            bool foundAny = false;
+
+            foreach (string gearName in GearNames.m_Names) {
+                if (!gearName.StartsWith("gear_")) continue;
+                string baseName = gearName.Substring("gear_".Length);
+
+                if (baseName.ToLowerInvariant().Contains(term)) {
+                    foundAny = true;
+                    uConsoleLog.Add(baseName);
+                }
+            }
+
+            if (!foundAny) {
+                uConsoleLog.Add("No gear names containing '" + term + "' found");
+            }
         }
     }
 }
