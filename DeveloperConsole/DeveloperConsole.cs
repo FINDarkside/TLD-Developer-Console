@@ -9,7 +9,14 @@ namespace DeveloperConsole {
 
         public override void OnApplicationStart() {
             AddConsoleCommands();
-            Debug.Log($"[{InfoAttribute.Name}] version {InfoAttribute.Version} loaded!");
+            FileLog.CreateLogFile();
+            Debug.Log($"[{Info.Name}] version {Info.Version} loaded!");
+        }
+
+        public override void OnApplicationQuit()
+        {
+            FileLog.MaybeLogNullReference();
+            base.OnApplicationQuit();
         }
 
         internal static void AddConsoleCommands() {
