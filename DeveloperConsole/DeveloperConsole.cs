@@ -26,6 +26,8 @@ namespace DeveloperConsole {
 
             uConsole.RegisterCommand("scene_list", new Action(ListScenes));
 
+            uConsole.RegisterCommand("parameter_list", new Action(ListParameters));
+
             uConsole.RegisterCommand("pos", new Action(GetPosition));
 
             uConsole.RegisterCommand("tp", new Action(Teleport));
@@ -38,6 +40,31 @@ namespace DeveloperConsole {
                 uConsoleLog.Add(i + ": " + PathToSceneName(path));
             }
         }
+
+        private static void ListParameters() {
+            if(uConsole.GetNumParameters() != 1) {
+                uConsoleLog.Add("'parameter_list' takes exactly one parameter.");
+                return;
+            }
+
+            string commandName = uConsole.GetString();
+            StringList parameters = new StringList();
+            foreach(var parameterSet in uConsoleAutoComplete.m_CommandParameterSets) {
+                if (parameterSet.m_Commands.Contains(commandName)) parameters.AddRange(parameterSet.m_AllowedParameters.ToArray());
+            }
+
+            if(parameters.Count == 0) {
+                uConsoleLog.Add($"'{commandName}' has no registered parameters to display.");
+            } else {
+                parameters.Sort();
+                uConsoleLog.Add("");
+                uConsoleLog.Add("Registered Parameters:");
+                foreach (string parameter in parameters){
+                    uConsoleLog.Add(parameter);
+                }
+            }
+        }
+
         internal static void AddSceneParameters() {
             Il2CppStringList sceneParamaters = new Il2CppStringList();
             StringList forbiddenScenes = new StringList() { "<null>" , "Empty", "Boot", "MainMenu" , "Ep3OpeningCine" };
