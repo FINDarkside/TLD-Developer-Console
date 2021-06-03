@@ -26,6 +26,8 @@ namespace DeveloperConsole {
 
             uConsole.RegisterCommand("scene_list", new Action(ListScenes));
 
+            uConsole.RegisterCommand("command_list", new Action(ListCommands));
+
             uConsole.RegisterCommand("pos", new Action(GetPosition));
 
             uConsole.RegisterCommand("tp", new Action(Teleport));
@@ -38,6 +40,17 @@ namespace DeveloperConsole {
                 uConsoleLog.Add(i + ": " + PathToSceneName(path));
             }
         }
+
+        private static void ListCommands() {
+            StringList commands = new StringList(uConsole.m_CommandsList.ToArray());
+            commands.Sort();
+            uConsoleLog.Add("");
+            uConsoleLog.Add("Available Commands:");
+            foreach (string command in commands) {
+                uConsoleLog.Add(command);
+			}
+		}
+
         internal static void AddSceneParameters() {
             Il2CppStringList sceneParamaters = new Il2CppStringList();
             StringList forbiddenScenes = new StringList() { "<null>" , "Empty", "Boot", "MainMenu" , "Ep3OpeningCine" };
