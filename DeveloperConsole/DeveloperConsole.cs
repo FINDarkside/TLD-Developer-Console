@@ -2,19 +2,21 @@
 using Scene = UnityEngine.SceneManagement;
 using MelonLoader;
 using System;
+using Il2CppStringList = Il2CppSystem.Collections.Generic.List<string>;
+using StringList = System.Collections.Generic.List<string>;
 
 namespace DeveloperConsole {
 
     internal class DeveloperConsole : MelonMod {
 
         public override void OnApplicationStart() {
-            AddConsoleCommands();
             FileLog.CreateLogFile();
+            AddConsoleCommands();
+            AddSceneParameters();
             Debug.Log($"[{Info.Name}] version {Info.Version} loaded!");
         }
 
-        public override void OnApplicationQuit()
-        {
+        public override void OnApplicationQuit() {
             FileLog.MaybeLogNullReference();
             base.OnApplicationQuit();
         }
@@ -30,18 +32,33 @@ namespace DeveloperConsole {
         }
 
         private static void ListScenes() {
-            string PathToSceneName(string path) {
-                if (string.IsNullOrEmpty(path)) return "<null>";
-                path = path.Substring(path.LastIndexOf("/") + 1);
-                path = path.Remove(path.Length - ".unity".Length);
-                return path;
-            }
-
             int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
             for (int i = 0; i < sceneCount; ++i) {
                 string path = Scene.SceneUtility.GetScenePathByBuildIndex(i);
                 uConsoleLog.Add(i + ": " + PathToSceneName(path));
             }
+        }
+        internal static void AddSceneParameters() {
+            Il2CppStringList sceneParamaters = new Il2CppStringList();
+            StringList forbiddenScenes = new StringList() { "<null>" , "Empty", "Boot", "MainMenu" , "Ep3OpeningCine" };
+
+            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
+            for (int i = 0; i < sceneCount; ++i) {
+                string path = PathToSceneName(Scene.SceneUtility.GetScenePathByBuildIndex(i));
+                if (forbiddenScenes.Contains(path)) continue;
+                if (path.Contains("_")) continue;
+                sceneParamaters.Add(path.ToLower());
+                sceneParamaters.Add(path);
+            }
+            sceneParamaters.Sort();
+            uConsoleAutoComplete.CreateCommandParameterSet("scene", sceneParamaters);
+        }
+
+        static string PathToSceneName(string path) {
+            if (string.IsNullOrEmpty(path)) return "<null>";
+            path = path.Substring(path.LastIndexOf("/") + 1);
+            path = path.Remove(path.Length - ".unity".Length);
+            return path;
         }
 
         private static void GetPosition() {
