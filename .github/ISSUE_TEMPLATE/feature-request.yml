@@ -1,0 +1,42 @@
+name: Feature Request
+description: Suggest an idea for our project
+title: "[FR] "
+labels: ["Type: Feature Request", "Status: New"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out this feature request. Take your time and be as detailed as possible.
+  - type: textarea
+    id: descriptionf
+    attributes:
+      label: Description
+      description: Description of the desired feature.
+      placeholder: A clear and concise description of the feature, and its functionality
+    validations:
+      required: true
+  - type: dropdown
+    id: feat1
+    attributes:
+      label: Problem Relations
+      description: Is your feature request related to a problem? If yes, post it below.
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true 
+  - type: textarea
+    id: feat2
+    attributes:
+      label: Feature Justification
+      description: Why is this feature needed?
+      placeholder: A clear and concise description of the reason for this feature
+    validations:
+      required: true
+  - type: textarea
+    id: adii2
+    attributes:
+      label: Additional Information
+      description: Add any other context about the feature here.
+    validations:
+      required: false
