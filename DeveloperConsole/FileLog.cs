@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
-using MelonLoader;
+using Il2Cpp;
+using MelonLoader.Utils;
 using System.IO;
 
 namespace DeveloperConsole {
@@ -8,7 +9,7 @@ namespace DeveloperConsole {
 		private const string NULL_REFERENCE_TEXT = "NullReferenceException: Object reference not set to an instance of an object.";
 		internal const string FILE_NAME = "DeveloperConsole.log";
 
-		private static string GetFilePath() => Path.GetFullPath(typeof(MelonMod).Assembly.Location + @"\..\..\Mods\" + FILE_NAME);
+		private static string GetFilePath() => Path.GetFullPath(Path.Combine(MelonEnvironment.ModsDirectory, FILE_NAME));
 
 		internal static void CreateLogFile() => File.Create(GetFilePath());
 
