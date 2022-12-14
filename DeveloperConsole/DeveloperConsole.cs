@@ -1,8 +1,11 @@
 ﻿using Il2Cpp;
+using Il2CppTLD.AddressableAssets;
+using Il2CppTLD.Scenes;
 using MelonLoader;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using Il2CppCollection = Il2CppSystem.Collections.Generic;
 using Scene = UnityEngine.SceneManagement;
 
@@ -13,7 +16,6 @@ namespace DeveloperConsole {
         public override void OnInitializeMelon() {
             FileLog.CreateLogFile();
             AddConsoleCommands();
-            AddSceneParameters();
             Debug.Log($"[{Info.Name}] version {Info.Version} loaded!");
         }
 
@@ -39,10 +41,16 @@ namespace DeveloperConsole {
         }
 
         private static void ListScenes() {
-            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
-            for (int i = 0; i < sceneCount; ++i) {
-                string path = Scene.SceneUtility.GetScenePathByBuildIndex(i);
-                uConsoleLog.Add(i + ": " + PathToSceneName(path));
+            Il2CppCollection.List<IResourceLocation> scenes = AssetHelper.FindAllAssetsLocations<SceneSet>().Cast<Il2CppCollection.List<IResourceLocation>>();
+
+            List<string> sceneNames = new List<string>(scenes.Count);
+            foreach (IResourceLocation sceneResource in scenes) {
+                sceneNames.Add(sceneResource.PrimaryKey);
+            }
+            sceneNames.Sort();
+
+            foreach (string sceneName in sceneNames) {
+                uConsoleLog.Add(sceneName);
             }
         }
 
@@ -68,29 +76,6 @@ namespace DeveloperConsole {
                     uConsoleLog.Add(parameter);
                 }
             }
-        }
-
-        internal static void AddSceneParameters() {
-            Il2CppCollection.List<string> sceneParamaters = new Il2CppCollection.List<string>();
-            List<string> forbiddenScenes = new List<string>() { "<null>" , "Empty", "Boot", "MainMenu" , "Ep3OpeningCine" };
-
-            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
-            for (int i = 0; i < sceneCount; ++i) {
-                string path = PathToSceneName(Scene.SceneUtility.GetScenePathByBuildIndex(i));
-                if (forbiddenScenes.Contains(path)) continue;
-                if (path.Contains("_")) continue;
-                sceneParamaters.Add(path.ToLower());
-                sceneParamaters.Add(path);
-            }
-            sceneParamaters.Sort();
-            uConsoleAutoComplete.CreateCommandParameterSet("scene", sceneParamaters);
-        }
-
-        private static string PathToSceneName(string path) {
-            if (string.IsNullOrEmpty(path)) return "<null>";
-            path = path.Substring(path.LastIndexOf("/") + 1);
-            path = path.Remove(path.Length - ".unity".Length);
-            return path;
         }
 
         private static void GetPosition() {
