@@ -2,8 +2,6 @@
 using Il2CppTLD.AddressableAssets;
 using Il2CppTLD.Scenes;
 using MelonLoader;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using Il2CppCollection = Il2CppSystem.Collections.Generic;

@@ -14,7 +14,7 @@ namespace DeveloperConsole {
             prefabLoadHandle.WaitForCompletion();
 
             GameObject prefab = prefabLoadHandle.Result;
-            Object.Instantiate(prefab);
+            UnityEngine.Object.Instantiate(prefab);
             uConsole.m_Instance.m_Activate = KeyCode.F1;
         }
     }

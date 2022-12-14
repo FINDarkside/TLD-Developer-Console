@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using Il2Cpp;
 using MelonLoader.Utils;
-using System.IO;
 
 namespace DeveloperConsole {
 	internal static class FileLog {
