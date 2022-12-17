@@ -1,18 +1,19 @@
-﻿using UnityEngine;
-using Scene = UnityEngine.SceneManagement;
+﻿using Il2Cpp;
+using Il2CppTLD.AddressableAssets;
+using Il2CppTLD.Scenes;
 using MelonLoader;
-using System;
-using Il2CppStringList = Il2CppSystem.Collections.Generic.List<string>;
-using StringList = System.Collections.Generic.List<string>;
+using UnityEngine;
+using UnityEngine.ResourceManagement.ResourceLocations;
+using Il2CppCollection = Il2CppSystem.Collections.Generic;
+using Scene = UnityEngine.SceneManagement;
 
 namespace DeveloperConsole {
 
     internal class DeveloperConsole : MelonMod {
 
-        public override void OnApplicationStart() {
+        public override void OnInitializeMelon() {
             FileLog.CreateLogFile();
             AddConsoleCommands();
-            AddSceneParameters();
             Debug.Log($"[{Info.Name}] version {Info.Version} loaded!");
         }
 
@@ -21,7 +22,7 @@ namespace DeveloperConsole {
             base.OnApplicationQuit();
         }
 
-        internal static void AddConsoleCommands() {
+        private static void AddConsoleCommands() {
             uConsole.RegisterCommand("scene_name", new Action(() => uConsoleLog.Add(Scene.SceneManager.GetActiveScene().name)));
 
             uConsole.RegisterCommand("scene_list", new Action(ListScenes));
@@ -31,13 +32,23 @@ namespace DeveloperConsole {
             uConsole.RegisterCommand("pos", new Action(GetPosition));
 
             uConsole.RegisterCommand("tp", new Action(Teleport));
+
+            uConsole.RegisterCommand("gear_list", new Action(ListGear));
+
+            uConsole.RegisterCommand("gear_search", new Action(SearchGear));
         }
 
         private static void ListScenes() {
-            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
-            for (int i = 0; i < sceneCount; ++i) {
-                string path = Scene.SceneUtility.GetScenePathByBuildIndex(i);
-                uConsoleLog.Add(i + ": " + PathToSceneName(path));
+            Il2CppCollection.List<IResourceLocation> scenes = AssetHelper.FindAllAssetsLocations<SceneSet>().Cast<Il2CppCollection.List<IResourceLocation>>();
+
+            List<string> sceneNames = new List<string>(scenes.Count);
+            foreach (IResourceLocation sceneResource in scenes) {
+                sceneNames.Add(sceneResource.PrimaryKey);
+            }
+            sceneNames.Sort();
+
+            foreach (string sceneName in sceneNames) {
+                uConsoleLog.Add(sceneName);
             }
         }
 
@@ -48,7 +59,7 @@ namespace DeveloperConsole {
             }
 
             string commandName = uConsole.GetString();
-            StringList parameters = new StringList();
+            List<string> parameters = new List<string>();
             foreach(var parameterSet in uConsoleAutoComplete.m_CommandParameterSets) {
                 if (parameterSet.m_Commands.Contains(commandName)) parameters.AddRange(parameterSet.m_AllowedParameters.ToArray());
             }
@@ -65,32 +76,9 @@ namespace DeveloperConsole {
             }
         }
 
-        internal static void AddSceneParameters() {
-            Il2CppStringList sceneParamaters = new Il2CppStringList();
-            StringList forbiddenScenes = new StringList() { "<null>" , "Empty", "Boot", "MainMenu" , "Ep3OpeningCine" };
-
-            int sceneCount = Scene.SceneManager.sceneCountInBuildSettings;
-            for (int i = 0; i < sceneCount; ++i) {
-                string path = PathToSceneName(Scene.SceneUtility.GetScenePathByBuildIndex(i));
-                if (forbiddenScenes.Contains(path)) continue;
-                if (path.Contains("_")) continue;
-                sceneParamaters.Add(path.ToLower());
-                sceneParamaters.Add(path);
-            }
-            sceneParamaters.Sort();
-            uConsoleAutoComplete.CreateCommandParameterSet("scene", sceneParamaters);
-        }
-
-        static string PathToSceneName(string path) {
-            if (string.IsNullOrEmpty(path)) return "<null>";
-            path = path.Substring(path.LastIndexOf("/") + 1);
-            path = path.Remove(path.Length - ".unity".Length);
-            return path;
-        }
-
         private static void GetPosition() {
             Vector3 pos = GameManager.GetVpFPSPlayer().transform.position;
-            uConsoleLog.Add(string.Format("[{0:F2} / {1:F2} / {2:F2}]", pos.x, pos.y, pos.z));
+            uConsoleLog.Add($"[{pos.x:F2} / {pos.y:F2} / {pos.z:F2}]");
         }
 
         private static void Teleport() {
@@ -119,6 +107,47 @@ namespace DeveloperConsole {
             Quaternion rot = GameManager.GetVpFPSCamera().transform.rotation;
             GameManager.GetPlayerManagerComponent().TeleportPlayer(target, rot);
             GameManager.GetPlayerManagerComponent().StickPlayerToGround();
+        }
+
+        private static void ListGear() {
+            SortedSet<string> sortedUniqueGear = new SortedSet<string>();
+            foreach (string gearName in ConsoleManager.m_SearchStringToGearNames.Values) {
+                if (!gearName.StartsWith("GEAR_")) continue;
+                sortedUniqueGear.Add(gearName.Substring("GEAR_".Length));
+            }
+
+            foreach (string gearName in sortedUniqueGear) {
+                uConsoleLog.Add(gearName);
+            }
+        }
+
+        private static void SearchGear() {
+            if (uConsole.GetNumParameters() != 1) {
+                uConsoleLog.Add("Usage: search_gear name");
+                return;
+            }
+
+            Il2CppCollection.Dictionary<string, string> gearNames = ConsoleManager.m_SearchStringToGearNames;
+            string term = uConsole.GetString().ToLowerInvariant();
+            SortedSet<string> results = new SortedSet<string>();
+
+            foreach (Il2CppCollection.KeyValuePair<string, string> entry in gearNames) {
+                if (!entry.Value.StartsWith("GEAR_")) continue;
+                string value = entry.Value.Substring("GEAR_".Length);
+                string key = entry.Key.StartsWith("gear_") ? entry.Key.Substring("gear_".Length) : entry.Key;
+
+                if (key.ToLowerInvariant().Contains(term) || value.ToLowerInvariant().Contains(term)) {
+                    results.Add(value);
+                }
+            }
+
+            if (results.Count > 0) {
+                foreach (string result in results) {
+                    uConsole.Log(result);
+                }
+            } else {
+                uConsoleLog.Add("No gear names containing '" + term + "' found");
+            }
         }
     }
 }
