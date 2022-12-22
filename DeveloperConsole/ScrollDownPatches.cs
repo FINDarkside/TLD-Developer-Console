@@ -11,7 +11,7 @@ namespace DeveloperConsole {
         }
     }
 
-    [HarmonyPatch(typeof(uConsoleAutoComplete), "DisplayPossibleMatches")]
+    [HarmonyPatch(typeof(uConsoleAutoComplete), "DisplayStringsStartingWithMatch")]
     internal static class ScrollDownOnAutoCompletePatch {
 
         private static void Postfix() {
