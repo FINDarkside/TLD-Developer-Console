@@ -21,36 +21,10 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 
-	<!--This tells the compiler where to look for assemblies. Don't change it.-->
-	<PropertyGroup>
-		<MelonLoaderPath>$(TheLongDarkPath)/MelonLoader/net6</MelonLoaderPath>
-		<ManagedPath>$(TheLongDarkPath)/MelonLoader/Managed</ManagedPath>
-		<Il2CppPath>$(TheLongDarkPath)/MelonLoader/Il2CppAssemblies</Il2CppPath>
-		<ModsPath>$(TheLongDarkPath)/Mods</ModsPath>
-		<AssemblySearchPaths>$(AssemblySearchPaths);$(MelonLoaderPath);$(ManagedPath);$(Il2CppPath);$(ModsPath);</AssemblySearchPaths>
-	</PropertyGroup>
-
-	<!--This tells the compiler to not include referenced assemblies in the output folder.-->
-	<ItemDefinitionGroup>
-		<Reference>
-			<Private>False</Private>
-			<SpecificVersion>False</SpecificVersion>
-		</Reference>
-	</ItemDefinitionGroup>
-
-	<!--This is the list of assemblies that the mod references. Most of these are unnecessary for normal mods, but are included here for completeness.-->
+	<!--This is the of packages that the mod references.-->
 	<ItemGroup>
-		<Reference Include="0Harmony" />
-		<Reference Include="MelonLoader" />
-		<Reference Include="Assembly-CSharp" />
-		<Reference Include="Il2CppInterop.Common" />
-		<Reference Include="Il2CppInterop.Runtime" />
-		<Reference Include="Il2Cppmscorlib" />
-		<Reference Include="Il2CppSystem" />
-		<Reference Include="Il2CppTLD.Addressables" />
-		<Reference Include="Unity.Addressables" />
-		<Reference Include="Unity.ResourceManager" />
-		<Reference Include="UnityEngine.CoreModule" />
-		<Reference Include="UnityEngine.PhysicsModule" />
+		<!--This package contains almost everything a person could possibly need to reference while modding.-->
+		<PackageReference Include="ds5678.Modding.TLD.Il2CppAssemblies.Windows" Version="2.6.0" />
+		<!--If the mod references any other mods (such as ModSettings), their NuGet package will also need to be listed here.-->
 	</ItemGroup>
 </Project>
