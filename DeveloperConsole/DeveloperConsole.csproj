@@ -24,7 +24,7 @@
 	<!--This is the of packages that the mod references.-->
 	<ItemGroup>
 		<!--This package contains almost everything a person could possibly need to reference while modding.-->
-		<PackageReference Include="ds5678.Modding.TLD.Il2CppAssemblies.Windows" Version="2.6.0" />
+		<PackageReference Include="ds5678.Modding.TLD.Il2CppAssemblies.Windows" Version="2.10.0" />
 		<!--If the mod references any other mods (such as ModSettings), their NuGet package will also need to be listed here.-->
 	</ItemGroup>
 </Project>
