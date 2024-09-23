@@ -27,7 +27,7 @@ jobs:
       run: dotnet build /p:Configuration=Release
 
     - name: Upload
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: DeveloperConsole
         path: ./DeveloperConsole/bin/Release/net6.0/DeveloperConsole.dll
